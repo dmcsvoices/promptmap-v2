@@ -18,7 +18,7 @@ PromptMap V2 is a prompt injection testing framework with a FastAPI backend and 
 ### Frontend (React + TypeScript)
 - **Create React App**: TypeScript template with Material-UI components
 - **Dependencies**: React 18, MUI, Axios, React Router, Socket.IO client, Chart.js
-- **Development Server**: Proxies API calls to `http://localhost:8000`
+- **Development Server**: Proxies API calls to `http://localhost:12001`
 
 ### Database
 - PostgreSQL with pgvector extension for vector operations
@@ -34,7 +34,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 python main.py
 ```
-Backend runs on http://localhost:8000
+Backend runs on http://localhost:12001
 
 ### Frontend Setup and Running  
 ```bash
@@ -83,6 +83,6 @@ Main API routes are organized as:
 
 - Backend uses FastAPI with auto-reload in debug mode
 - Frontend uses Create React App development server with hot reloading
-- CORS is configured to allow localhost:3000 and localhost:8000
+- CORS is configured to allow localhost:3000 and localhost:12001
 - Database models use SQLAlchemy with async support
 - API keys for OpenAI and Anthropic should be added to `.env`

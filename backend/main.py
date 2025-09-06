@@ -64,8 +64,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000", 
         "http://127.0.0.1:3000",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000"
+        "http://localhost:12001",
+        "http://127.0.0.1:12001"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     import uvicorn
     
     host = os.getenv("API_HOST", "0.0.0.0")
-    port = int(os.getenv("API_PORT", 8000))
+    port = int(os.getenv("API_PORT", 12001))
     debug = os.getenv("DEBUG", "true").lower() == "true"
     
     logger.info(f"🚀 Starting server on {host}:{port} (debug={debug})")
