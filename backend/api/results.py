@@ -16,6 +16,20 @@ from models.system_prompt import SystemPromptModel
 router = APIRouter()
 
 
+async def get_prompt_number_mapping(session_id: int, db: AsyncSession) -> Dict[int, int]:
+    """Get mapping from prompt_id to prompt_number (1-indexed) for a session"""
+    session_prompts_query = (
+        select(SystemPromptModel.id)
+        .where(SystemPromptModel.session_id == session_id)
+        .order_by(SystemPromptModel.created_at.asc())
+    )
+    prompts_result = await db.execute(session_prompts_query)
+    session_prompts = prompts_result.scalars().all()
+    
+    # Create a mapping from prompt_id to prompt_number (1-indexed)
+    return {prompt_id: idx + 1 for idx, prompt_id in enumerate(session_prompts)}
+
+
 class SessionStatistics(BaseModel):
     session_id: int
     session_name: str
@@ -151,6 +165,9 @@ async def get_session_results(
         offset = (page - 1) * per_page
         pages = (total + per_page - 1) // per_page  # Ceiling division
         
+        # Get prompt number mapping for this session
+        prompt_id_to_number = await get_prompt_number_mapping(session_id, db)
+        
         # Get paginated results with session and prompt information
         results_query = (
             select(TestResultModel, SessionModel.name, SystemPromptModel.id)
@@ -170,7 +187,7 @@ async def get_session_results(
         for result, session_name, prompt_id in results_list:
             result_dict = result.to_dict()
             result_dict['session_name'] = session_name
-            result_dict['prompt_number'] = prompt_id  # Using prompt_id as prompt number for now
+            result_dict['prompt_number'] = prompt_id_to_number.get(prompt_id, 'N/A') if prompt_id else 'N/A'
             enhanced_results.append(result_dict)
         
         return ResultsResponse(
@@ -208,9 +225,17 @@ async def get_result_details(
             raise HTTPException(status_code=404, detail=f"Result {result_id} not found")
         
         test_result, session_name, prompt_id = result_data
+        
+        # Get prompt number for this result
+        if prompt_id:
+            prompt_id_to_number = await get_prompt_number_mapping(test_result.session_id, db)
+            prompt_number = prompt_id_to_number.get(prompt_id, 'N/A')
+        else:
+            prompt_number = 'N/A'
+        
         result_dict = test_result.to_dict()
         result_dict['session_name'] = session_name
-        result_dict['prompt_number'] = prompt_id
+        result_dict['prompt_number'] = prompt_number
         
         return result_dict
         
@@ -239,15 +264,25 @@ async def export_session_results(
         # Get statistics
         statistics = await get_session_statistics(session_id, db)
         
+        # Get prompt number mapping for this session
+        prompt_id_to_number = await get_prompt_number_mapping(session_id, db)
+        
         # Get all results
         results_query = select(TestResultModel).where(TestResultModel.session_id == session_id)
         results = await db.execute(results_query)
         all_results = results.scalars().all()
         
+        # Add prompt numbers to results
+        enhanced_results = []
+        for result in all_results:
+            result_dict = result.to_dict()
+            result_dict['prompt_number'] = prompt_id_to_number.get(result.prompt_id, 'N/A') if result.prompt_id else 'N/A'
+            enhanced_results.append(result_dict)
+        
         export_data = {
             "session": session.to_dict(),
             "statistics": statistics.dict(),
-            "results": [result.to_dict() for result in all_results],
+            "results": enhanced_results,
             "exported_at": func.now()
         }
         
