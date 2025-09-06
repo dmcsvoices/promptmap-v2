@@ -42,9 +42,19 @@ print_banner() {
 
 print_banner
 
+# Check if running as root
+if [ "$EUID" -eq 0 ]; then
+    print_error "Don't run this script as root (sudo)! Run as normal user instead."
+    print_info "If PostgreSQL needs to be started, run: brew services start postgresql@15"
+    exit 1
+fi
+
 # Get script directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd "$SCRIPT_DIR"
+
+# Create logs directory if it doesn't exist
+mkdir -p logs
 
 print_info "Starting PromptMap V2 system..."
 
@@ -54,9 +64,14 @@ if brew services list | grep postgresql@15 | grep started > /dev/null; then
     print_status "PostgreSQL is running"
 else
     print_info "Starting PostgreSQL service..."
-    brew services start postgresql@15
-    sleep 3
-    print_status "PostgreSQL started"
+    # Don't run as root - let it fail gracefully and continue
+    if brew services start postgresql@15 2>/dev/null; then
+        sleep 3
+        print_status "PostgreSQL started"
+    else
+        print_warning "PostgreSQL service start failed, but continuing..."
+        print_info "You may need to start PostgreSQL manually with: brew services start postgresql@15"
+    fi
 fi
 
 # Kill any existing processes on our ports
@@ -85,7 +100,7 @@ if [ -d "venv" ]; then
     source venv/bin/activate
     
     print_info "Installing/updating Python dependencies..."
-    pip install -r requirements.txt --quiet
+    pip install -r requirements.txt --quiet --no-warn-script-location
     
     print_info "Starting FastAPI backend server..."
     nohup python main.py > ../logs/backend.log 2>&1 &
@@ -138,9 +153,6 @@ else
 fi
 
 cd ..
-
-# Create logs directory if it doesn't exist
-mkdir -p logs
 
 print_status "PromptMap V2 system startup completed successfully!"
 echo ""
