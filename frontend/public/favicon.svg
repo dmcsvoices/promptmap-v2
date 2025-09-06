@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="scan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0" />
+      <stop offset="50%" style="stop-color:#00ff88;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00ff88;stop-opacity:0" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="url(#bg)" stroke="#fff" stroke-width="2"/>
+  
+  <!-- Shield shape -->
+  <path d="M32 8 L48 16 L48 36 Q48 48 32 56 Q16 48 16 36 L16 16 Z" 
+        fill="rgba(255,255,255,0.2)" stroke="#fff" stroke-width="2"/>
+  
+  <!-- Scanner lines -->
+  <rect x="20" y="20" width="24" height="2" fill="url(#scan)" opacity="0.8">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="20" y="26" width="24" height="2" fill="url(#scan)" opacity="0.6">
+    <animate attributeName="opacity" values="0.2;0.8;0.2" dur="2s" begin="0.3s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="20" y="32" width="24" height="2" fill="url(#scan)" opacity="0.9">
+    <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" begin="0.6s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="20" y="38" width="24" height="2" fill="url(#scan)" opacity="0.7">
+    <animate attributeName="opacity" values="0.2;0.9;0.2" dur="2s" begin="0.9s" repeatCount="indefinite"/>
+  </rect>
+  
+  <!-- Central scanning indicator -->
+  <circle cx="32" cy="30" r="3" fill="#00ff88" opacity="0.8">
+    <animate attributeName="r" values="2;4;2" dur="1.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.8;0.4;0.8" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Corner brackets -->
+  <path d="M22 18 L18 18 L18 22" stroke="#00ff88" stroke-width="2" fill="none" opacity="0.9"/>
+  <path d="M42 18 L46 18 L46 22" stroke="#00ff88" stroke-width="2" fill="none" opacity="0.9"/>
+  <path d="M22 42 L18 42 L18 38" stroke="#00ff88" stroke-width="2" fill="none" opacity="0.9"/>
+  <path d="M42 42 L46 42 L46 38" stroke="#00ff88" stroke-width="2" fill="none" opacity="0.9"/>
+</svg>
