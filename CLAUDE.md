@@ -21,9 +21,11 @@ PromptMap V2 is a prompt injection testing framework with a FastAPI backend and 
 - **Development Server**: Proxies API calls to `http://localhost:12001`
 
 ### Database
-- PostgreSQL with pgvector extension for vector operations
+- PostgreSQL@15 with pgvector extension for vector operations
+- pgvector compiled from source for PostgreSQL@15 compatibility
 - Configuration stored in `.env` file
 - Uses existing database `promptmap_web` from V1 located in the `../promptmap-web` folder (at the same level as this project)
+- Vector search capabilities for embeddings and AI-powered features
 
 ## Development Commands
 
@@ -61,6 +63,7 @@ Run the setup script to configure the entire environment:
 - `backend/requirements.txt` - Python dependencies
 - `frontend/package.json` - Node.js dependencies and scripts
 - `setup.sh` - Complete infrastructure setup script for macOS
+- `docs/PGVECTOR_SETUP.md` - Detailed pgvector installation and setup guide
 
 ## Database Connection
 
@@ -68,6 +71,8 @@ The application connects to PostgreSQL using async SQLAlchemy. Database connecti
 - Connection handled in `backend/database/connection.py`
 - Health check endpoint: `/health` and `/api/test-db`
 - Uses pgvector extension for vector operations
+- pgvector extension is automatically initialized on startup
+- Supports vector similarity search, embeddings, and HNSW/IVFFlat indexing
 
 ## API Endpoints Structure
 
@@ -86,3 +91,26 @@ Main API routes are organized as:
 - CORS is configured to allow localhost:3000 and localhost:12001
 - Database models use SQLAlchemy with async support
 - API keys for OpenAI and Anthropic should be added to `.env`
+
+## pgvector Setup
+
+The project requires pgvector extension for vector similarity search. For PostgreSQL@15:
+
+### Quick Setup
+```bash
+# Compile pgvector from source
+cd /tmp && git clone --branch v0.8.1 https://github.com/pgvector/pgvector.git
+cd pgvector && export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"
+make && make install
+
+# Enable in database
+psql -U tikbalang -d promptmap_web -c "CREATE EXTENSION IF NOT EXISTS vector;"
+```
+
+### Verification
+When starting the system, look for:
+```
+✅ pgvector extension enabled
+```
+
+See `docs/PGVECTOR_SETUP.md` for complete installation guide and troubleshooting.
