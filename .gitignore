@@ -26,14 +26,29 @@ venv/
 env/
 ENV/
 
-# Environment variables
+# Environment variables and secrets
 .env
+.env.*
+*.env
+.env.local
+.env.development
+.env.test
+.env.production
+*.key
+*.pem
+*.p12
+*.pfx
+config.json
+secrets.json
+credentials.json
 
 # IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
+.project
+.pydevproject
 
 # OS
 .DS_Store
@@ -64,6 +79,19 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+
+# Security and API keys
+*.jwt
+*.token
+auth.json
+.secrets/
+.ssh/
+.gnupg/
 
 # Logs directory
 logs/
