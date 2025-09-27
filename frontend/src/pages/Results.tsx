@@ -230,26 +230,86 @@ const Results: React.FC = () => {
   };
 
   const handleExport = async () => {
-    if (!selectedSessionId) return;
-    
+    if (!selectedSessionId || !statistics) return;
+
     try {
       setExporting(true);
       const exportData = await apiService.exportSessionResults(selectedSessionId);
-      
-      // Create downloadable file
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-        type: 'application/json'
+
+      // Create CSV content with summary header
+      const csvLines: string[] = [];
+
+      // Summary section
+      csvLines.push('# PromptMap V2 - Test Results Export');
+      csvLines.push(`# Session: ${statistics.session_name}`);
+      csvLines.push(`# Export Date: ${new Date().toISOString()}`);
+      csvLines.push(`# Total Tests: ${statistics.total_tests}`);
+      csvLines.push(`# Passed Tests: ${statistics.passed_tests}`);
+      csvLines.push(`# Failed Tests: ${statistics.failed_tests}`);
+      csvLines.push(`# Average ASR: ${statistics.average_asr.toFixed(1)}%`);
+      csvLines.push('');
+
+      // CSV headers
+      const headers = [
+        'ID',
+        'Rule Name',
+        'Rule Type',
+        'Rule Severity',
+        'Session Name',
+        'Prompt Number',
+        'Passed',
+        'Pass Rate',
+        'ASR (%)',
+        'Execution Time (ms)',
+        'Response',
+        'Failure Reason',
+        'Created At'
+      ];
+      csvLines.push(headers.join(','));
+
+      // CSV data rows
+      exportData.results.forEach((result: any) => {
+        const row = [
+          result.id || '',
+          `"${(result.rule_name || '').replace(/"/g, '""')}"`,
+          result.rule_type || '',
+          result.rule_severity || '',
+          `"${(result.session_name || statistics.session_name || '').replace(/"/g, '""')}"`,
+          result.prompt_number || 'N/A',
+          result.passed ? 'TRUE' : 'FALSE',
+          result.pass_rate || '',
+          result.asr || 0,
+          result.execution_time_ms || 0,
+          `"${(result.response || '').replace(/"/g, '""').replace(/\n/g, ' ').substring(0, 500)}"`,
+          `"${(result.failure_reason || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`,
+          result.created_at || ''
+        ];
+        csvLines.push(row.join(','));
       });
+
+      // Create downloadable CSV file
+      const csvContent = csvLines.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `promptmap-results-${statistics?.session_name}-${new Date().toISOString().split('T')[0]}.json`;
+
+      // Generate filename with session name and timestamp
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
+      const sessionName = statistics.session_name.replace(/[^a-zA-Z0-9-_]/g, '_');
+      link.download = `${sessionName}_${timestamp}_test_results.csv`;
+
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    } catch (err) {
-      setError('Failed to export results');
+
+      // Show success message
+      const successMessage = `Export completed! Downloaded ${exportData.results.length} test results for session "${statistics.session_name}".`;
+      alert(successMessage);
+
+    } catch (err: any) {
+      setError(`Failed to export results: ${err.response?.data?.detail || err.message}`);
     } finally {
       setExporting(false);
     }
@@ -360,6 +420,11 @@ const Results: React.FC = () => {
             startIcon={exporting ? <CircularProgress size={20} /> : <ExportIcon />}
             onClick={handleExport}
             disabled={!selectedSessionId || exporting}
+            sx={{
+              color: '#ffffff',
+              fontWeight: 600,
+              textShadow: '0 1px 2px rgba(0,0,0,0.3)'
+            }}
           >
             {exporting ? 'Exporting...' : 'Export'}
           </Button>

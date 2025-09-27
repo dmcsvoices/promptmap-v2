@@ -279,11 +279,13 @@ async def export_session_results(
             result_dict['prompt_number'] = prompt_id_to_number.get(result.prompt_id, 'N/A') if result.prompt_id else 'N/A'
             enhanced_results.append(result_dict)
         
+        import datetime
+
         export_data = {
             "session": session.to_dict(),
             "statistics": statistics.dict(),
             "results": enhanced_results,
-            "exported_at": func.now()
+            "exported_at": datetime.datetime.utcnow().isoformat()
         }
         
         return export_data

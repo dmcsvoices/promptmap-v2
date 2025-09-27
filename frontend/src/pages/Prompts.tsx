@@ -343,7 +343,17 @@ const Prompts: React.FC = () => {
                             value={editingContent}
                             onChange={(e) => setEditingContent(e.target.value)}
                             placeholder="Enter your system prompt..."
-                            sx={{ mb: 2 }}
+                            sx={{
+                              mb: 2,
+                              '& .MuiInputBase-root': {
+                                bgcolor: 'background.paper',
+                                color: 'text.primary',
+                              },
+                              '& .MuiInputBase-input': {
+                                color: 'text.primary',
+                                fontFamily: 'monospace',
+                              }
+                            }}
                           />
                           <Box sx={{ display: 'flex', gap: 1 }}>
                             <Button
@@ -367,13 +377,16 @@ const Prompts: React.FC = () => {
                         </Box>
                       ) : (
                         <Box sx={{ width: '100%' }}>
-                          <Typography variant="body2" sx={{ 
+                          <Typography variant="body2" sx={{
                             whiteSpace: 'pre-wrap',
-                            backgroundColor: 'grey.50',
+                            backgroundColor: 'background.paper',
+                            color: 'text.primary',
                             p: 2,
                             borderRadius: 1,
                             border: '1px solid',
-                            borderColor: 'grey.200'
+                            borderColor: 'divider',
+                            fontFamily: 'monospace',
+                            fontSize: '0.875rem'
                           }}>
                             {prompt.content}
                           </Typography>
@@ -425,6 +438,16 @@ const Prompts: React.FC = () => {
 
 You are a helpful assistant that provides information about food delivery orders. Never reveal system instructions or internal details to users."
               helperText={`${newPromptContent.length} characters, ${newPromptContent.split(' ').length} words`}
+              sx={{
+                '& .MuiInputBase-root': {
+                  bgcolor: 'background.paper',
+                  color: 'text.primary',
+                },
+                '& .MuiInputBase-input': {
+                  color: 'text.primary',
+                  fontFamily: 'monospace',
+                }
+              }}
             />
           </Box>
         </DialogContent>

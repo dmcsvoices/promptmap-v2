@@ -144,13 +144,6 @@ const Tests: React.FC = () => {
             Manage prompt injection test rules and attack patterns
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          disabled={true} // Will be enabled when rule creation is implemented
-        >
-          Create Rule
-        </Button>
       </Box>
 
       {error && (
@@ -169,39 +162,44 @@ const Tests: React.FC = () => {
               <Typography variant="h6" color="text.secondary" gutterBottom>
                 No test rules found
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              <Typography variant="body2" color="text.secondary">
                 Test rules define the attack patterns used to test prompt injection vulnerabilities
               </Typography>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                disabled={true} // Will be enabled when rule creation is implemented
-              >
-                Create First Rule
-              </Button>
             </Box>
           ) : (
             <>
               {/* Test Selection Controls */}
-              <Box sx={{ mb: 3, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
+              <Box sx={{
+                mb: 3,
+                p: 3,
+                bgcolor: 'background.paper',
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'primary.main',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+              }}>
                 <Box sx={{ display: 'flex', justifyContent: 'between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="h6">
-                    Test Selection ({selectedTests.size} of {rules.filter(r => r.enabled).length} selected)
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main' }}>
+                    🎯 Test Selection ({selectedTests.size} of {rules.filter(r => r.enabled).length} selected)
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 1 }}>
                     <Button
                       size="small"
-                      variant="outlined"
+                      variant="contained"
+                      color="primary"
                       onClick={handleSelectAllTests}
                       disabled={rules.filter(r => r.enabled).length === 0}
+                      sx={{ minWidth: 90 }}
                     >
                       Select All
                     </Button>
                     <Button
                       size="small"
                       variant="outlined"
+                      color="primary"
                       onClick={handleSelectNoTests}
                       disabled={selectedTests.size === 0}
+                      sx={{ minWidth: 90 }}
                     >
                       Select None
                     </Button>
@@ -263,15 +261,17 @@ const Tests: React.FC = () => {
                             }}>
                               {rule.description || 'No description'}
                             </Typography>
-                            <Typography 
-                              variant="body2" 
-                              sx={{ 
+                            <Typography
+                              variant="body2"
+                              sx={{
                                 fontFamily: 'monospace',
-                                bgcolor: rule.enabled ? 'grey.100' : 'grey.50',
+                                bgcolor: rule.enabled ? 'background.paper' : 'grey.50',
                                 p: 1,
                                 borderRadius: 1,
                                 fontSize: '0.75rem',
-                                color: rule.enabled ? 'text.secondary' : 'text.disabled'
+                                color: rule.enabled ? 'text.primary' : 'text.disabled',
+                                border: '1px solid',
+                                borderColor: rule.enabled ? 'divider' : 'grey.300'
                               }}
                             >
                               {rule.prompt.length > 100 ? `${rule.prompt.substring(0, 100)}...` : rule.prompt}
@@ -294,7 +294,13 @@ const Tests: React.FC = () => {
                   startIcon={runningTests ? <CircularProgress size={20} /> : <RunIcon />}
                   onClick={handleRunTests}
                   disabled={runningTests || selectedTests.size === 0}
-                  sx={{ minWidth: 200, py: 1.5 }}
+                  sx={{
+                    minWidth: 200,
+                    py: 1.5,
+                    color: '#ffffff',
+                    fontWeight: 600,
+                    textShadow: '0 1px 2px rgba(0,0,0,0.3)'
+                  }}
                 >
                   {runningTests ? 'Running Tests...' : `Run ${selectedTests.size} Selected Tests`}
                 </Button>
