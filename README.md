@@ -26,3 +26,29 @@ PromptMap V2 enhances the original with:
 ## License
 
 GPL-3.0 (same as original PromptMap)
+
+## Screenshots
+
+### Dashboard
+![Dashboard](docs/images/Dashboard.png)
+*Main dashboard showing system status, API connectivity, and quick actions for creating sessions and configuring tests*
+
+### System Prompts
+![System Prompts](docs/images/SystemPrompts.png)
+*System prompts management interface for testing prompt injection vulnerabilities with session selection and detailed prompt configuration*
+
+### Tests
+![Tests](docs/images/Tests.png)
+*Test selection interface displaying available prompt injection tests with severity levels (high/medium/low) and attack categories (prompt stealing, distraction)*
+
+### Test Results
+![Test Results](docs/images/TestResults.png)
+*Test results overview with visual analytics showing total tests, pass/fail rates, severity distribution charts, and average ASR (Attack Success Rate)*
+
+### Test Results Detail
+![Test Results Detail](docs/images/TestResults2.png)
+*Detailed test results table showing individual test outcomes, severity levels, execution times, and pass rates for comprehensive analysis*
+
+### Settings
+![Settings](docs/images/Settings.png)
+*Configuration panel for OpenAI-compliant endpoints, model selection, test execution settings, and AI-powered text classification options*
